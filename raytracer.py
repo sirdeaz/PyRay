@@ -68,9 +68,6 @@ class ViewPlane(object):
     def iter_row(self, row):
         for column in range(self.resolution[0]):
             origin = numpy.zeros(3)
-            # origin[0] = self.pixel_size*(column - self.resolution[0] / 2 + 0.5)
-            # origin[1] = self.pixel_size*(row - self.resolution[1] / 2 + 0.5)
-            # I've created a grid in excel with a size of 20, 20 to investigate why this simple calculation works
             origin[0] = self.pixel_size*(column - self.resolution[0] / 2 + 0.5)
             origin[1] = self.pixel_size*(self.resolution[1] / 2 - row - 0.5)
             origin[2] = 100.0  # see article, there's a calculation that includes a FOV component
