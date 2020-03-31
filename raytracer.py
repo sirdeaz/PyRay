@@ -2,6 +2,7 @@ import pygame
 import numpy
 import sys
 import time
+import math
 
 
 class Shape(object):
@@ -39,6 +40,26 @@ class Sphere(Shape):
         normal = None  # todo: not sure what to do with this?
 
         return ShadeRecord(normal=normal, hit_point=hit_point)
+
+
+class Plane(Shape):
+    def __init__(self, center, normal):
+        self.center = numpy.array(center)
+        self.normal = numpy.array(normal)
+
+    def hit(self, ray):
+        denominator = numpy.dot(self.normal, ray.direction)
+
+        if abs(denominator) > 0.0001:
+            t = numpy.dot(self.center - ray.origin, self.normal) / denominator
+
+            if (t > 0.0001):
+                hit_point = ray.origin + t * ray.direction
+                normal = None  # todo: not sure what to do with this?
+
+                return ShadeRecord(normal=normal, hit_point=hit_point)
+
+        return None
 
 
 class Box(Shape):
@@ -98,9 +119,12 @@ class World(object):
     def __init__(self):
         self.viewplane = ViewPlane(resolution=(640, 480), pixel_size=1.0)
         self.background_color = (0.0, 0.0, 0.0)
-        self.shapes = [Sphere(center=(0.0, 0.0, 0.0), radius=20.0),
-                       Sphere(center=(-100.0, 150.0, 0.0), radius=100.0),
-                       Sphere(center=(200.0, -50.0, 0.0), radius=80.0)]
+        # self.shapes = [Sphere(center=(0.0, 0.0, 0.0), radius=20.0),
+        #                Sphere(center=(-100.0, 150.0, 0.0), radius=100.0),
+        #                Sphere(center=(200.0, -50.0, 0.0), radius=80.0),
+        #                Plane(center=(0.0, 0.0, 0.0), normal=(0.0, 1.0, 0.0))]
+
+        self.shapes = [Plane(center=(10.0, 10.0, 10.0), normal=(0.0, 1.0, 1.0))]
 
     def render(self):
         pygame.display.init()
