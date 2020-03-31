@@ -3,7 +3,13 @@ import numpy
 import sys
 import time
 
-class Sphere(object):
+
+class Shape(object):
+    def hit(self, ray):
+        return None
+
+
+class Sphere(Shape):
     def __init__(self, center, radius):
         self.center = numpy.array(center)
         self.radius = numpy.array(radius)
@@ -35,6 +41,11 @@ class Sphere(object):
         return ShadeRecord(normal=normal, hit_point=hit_point)
 
 
+class Box(Shape):
+    def hit(self, ray):
+        return None
+
+
 class Ray(object):
     def __init__(self, origin, direction):
         self.origin = numpy.array(origin)
@@ -52,10 +63,13 @@ class Tracer(object):
         self.world = world
 
     def trace_ray(self, ray):
-        if self.world.sphere.hit(ray):
-            return (1.0, 0.0, 0.0)
-        else:
-            return (0.0, 0.0, 0.0)
+        shapes = self.world.shapes
+
+        for shape in shapes:
+            if shape.hit(ray):
+                return (1.0, 0.0, 0.0)
+
+        return (0.0, 0.0, 0.0)
 
 
 class ViewPlane(object):
@@ -84,7 +98,9 @@ class World(object):
     def __init__(self):
         self.viewplane = ViewPlane(resolution=(640, 480), pixel_size=1.0)
         self.background_color = (0.0, 0.0, 0.0)
-        self.sphere = Sphere(center=(0.0, 0.0, 0.0), radius=20.0)
+        self.shapes = [Sphere(center=(0.0, 0.0, 0.0), radius=20.0),
+                       Sphere(center=(-100.0, 150.0, 0.0), radius=100.0),
+                       Sphere(center=(200.0, -50.0, 0.0), radius=80.0)]
 
     def render(self):
         pygame.display.init()
@@ -113,7 +129,6 @@ class World(object):
                     pygame.display.quit()
                     pygame.quit()
                     sys.exit(0)
-                    print("I've hit the quit button")
 
 
 w = World()
